@@ -1,17 +1,19 @@
 {
-  "name": "publish",
+  "name": "@dot-event/publish",
   "version": "0.0.1",
-  "description": "",
+  "description": "dot-event package publish",
   "keywords": [
-    ""
+    "dot-event",
+    "package",
+    "publish"
   ],
-  "author": " <>",
+  "author": "dot-event <oss@dot-event.io>",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com//publish.git"
+    "url": "git+ssh://git@github.com/dot-event/publish.git"
   },
   "license": "MIT",
-  "homepage": "https://github.com//publish#readme",
+  "homepage": "https://github.com/dot-event/publish#readme",
   "main": "dist/publish.js",
   "scripts": {
     "build": "babel *.js --out-dir dist --source-maps",
