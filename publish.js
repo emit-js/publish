@@ -4,7 +4,11 @@ module.exports = function(dot) {
   }
 
   dot("dependencies", "publish", {
-    arg: ["@dot-event/spawn"],
+    arg: [
+      "@dot-event/spawn",
+      "@dot-event/version",
+      "@dot-event/wait",
+    ],
   })
 
   dot("alias", "publish", {
@@ -15,11 +19,12 @@ module.exports = function(dot) {
 }
 
 async function publish(prop, arg, dot) {
-  const { cwd, version } = arg
-  const opts = { cli: true, cwd }
+  const { cwd, paths, version } = arg
+  const count = paths.length,
+    opts = { cli: true, cwd }
 
   if (await dirtyTree(prop, arg, dot)) {
-    return
+    return returnWait(prop, count, dot)
   }
 
   const { out } = await dot.spawn(prop, {
@@ -31,7 +36,7 @@ async function publish(prop, arg, dot) {
   const released = out.match(/\.\d+\r\n$/)
 
   if (released) {
-    return
+    return returnWait(prop, count, dot)
   }
 
   const { code } = await dot.spawn(prop, {
@@ -40,9 +45,29 @@ async function publish(prop, arg, dot) {
     ...opts,
   })
 
+  await dot.wait("waitForPatches", { count })
+
   if (code > 0) {
-    return
+    return returnWait(prop, count, dot)
   }
+
+  if (!arg.versionRan) {
+    arg.versionRan = true
+    await dot.cliEmit(prop, {
+      argv: {
+        eventId: "version",
+      },
+      paths,
+    })
+  }
+
+  await dot.wait("waitForVersion", { count })
+
+  await dot.spawn(prop, {
+    args: ["commit", "-a", "--amend", "--no-edit"],
+    command: "git",
+    ...opts,
+  })
 
   await Promise.all([
     dot.spawn(prop, {
@@ -66,4 +91,11 @@ async function dirtyTree(prop, arg, dot) {
   })
 
   return code !== 0
+}
+
+function returnWait(prop, arg, dot) {
+  return Promise.all([
+    dot.wait("waitForPatches", { count: arg }),
+    dot.wait("waitForVersion", { count: arg }),
+  ])
 }
