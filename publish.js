@@ -8,9 +8,15 @@ If a project:
 then:
 
 * bump the npm version (default semver: --version=patch)
-* sync all versions using https://github.com/@dot-event/version
+* sync all versions using @dot-event/version
 * git commit, tag, push
 * npm publish
+
+Otherwise, if the project has a clean git tree and is on
+master, but is tagged (released):
+
+* wait for version sync
+* git commit if dependencies changed
 `
 
 module.exports = function(dot) {
@@ -34,6 +40,7 @@ module.exports = function(dot) {
 
   dot.any("publish", publish)
 
+  require("./publishCommitVersionChanges")(dot)
   require("./publishDirtyStatus")(dot)
   require("./publishGitCommit")(dot)
   require("./publishGitPush")(dot)
@@ -42,6 +49,7 @@ module.exports = function(dot) {
   require("./publishReadBranch")(dot)
   require("./publishReadVersion")(dot)
   require("./publishReleaseStatus")(dot)
+  require("./publishWaitForAll")(dot)
 }
 
 async function publish(prop, arg, dot) {
@@ -52,25 +60,25 @@ async function publish(prop, arg, dot) {
   ;[err, out] = await dot.publishDirtyStatus(prop, arg)
 
   if (err || out) {
-    return cancelWait(dot)
+    return dot.publishWaitForAll()
   }
 
   ;[err, out] = await dot.publishReadBranch(prop, arg)
 
   if (err || out !== "master") {
-    return cancelWait(dot)
+    return dot.publishWaitForAll()
   }
 
   ;[err, out] = await dot.publishReleaseStatus(prop, arg)
 
   if (err || out) {
-    return cancelWait(dot)
+    return dot.publishCommitVersionChanges(prop, arg)
   }
 
   ;[err, out] = await dot.publishNpmVersion(prop, arg)
 
   if (err) {
-    return cancelWait(dot)
+    return dot.publishWaitForAll()
   }
 
   await dot.wait("npmVersion", { count })
@@ -89,18 +97,23 @@ async function publish(prop, arg, dot) {
   await dot.wait("dotVersion", { count })
 
   const newVersion = await dot.publishReadVersion(prop, arg)
-  const newArg = { cwd, newVersion }
 
-  ;[err, out] = await dot.publishGitCommit(prop, newArg)
+  ;[err, out] = await dot.publishGitCommit(prop, {
+    cwd,
+    message: newVersion,
+  })
 
   if (err) {
-    return cancelWait(dot)
+    return dot.publishWaitForAll()
   }
 
-  ;[err, out] = await dot.publishGitTag(prop, newArg)
+  ;[err, out] = await dot.publishGitTag(prop, {
+    cwd,
+    newVersion,
+  })
 
   if (err) {
-    return cancelWait(dot)
+    return dot.publishWaitForAll()
   }
 
   await Promise.all([
@@ -112,12 +125,5 @@ async function publish(prop, arg, dot) {
       cwd,
       log: true,
     }),
-  ])
-}
-
-function cancelWait(dot) {
-  return Promise.all([
-    dot.wait("npmVersion"),
-    dot.wait("dotVersion"),
   ])
 }

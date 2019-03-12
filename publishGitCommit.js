@@ -7,9 +7,9 @@ module.exports = function(dot) {
 }
 
 async function publishGitCommit(prop, arg, dot) {
-  const { cwd, newVersion } = arg
+  const { cwd, message } = arg
   const { code, out } = await dot.spawn(prop, {
-    args: ["commit", "-a", "-m", newVersion],
+    args: ["commit", "-a", "-m", message],
     command: "git",
     cwd,
   })
