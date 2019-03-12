@@ -93,6 +93,7 @@ async function publish(prop, arg, dot) {
       args: ["publish"],
       command: "npm",
       cwd,
+      log: true,
     }),
   ])
 }
