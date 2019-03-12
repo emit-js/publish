@@ -15,44 +15,49 @@ module.exports = function(dot) {
     v: ["version"],
   })
 
+  require("./publishDirtyStatus")(dot)
+  require("./publishGitCommit")(dot)
+  require("./publishGitPush")(dot)
+  require("./publishGitTag")(dot)
+  require("./publishNpmVersion")(dot)
+  require("./publishReadVersion")(dot)
+  require("./publishReleaseStatus")(dot)
+
   dot.any("publish", publish)
 }
 
 async function publish(prop, arg, dot) {
-  const { cwd, paths, version } = arg
-  const count = paths.length,
-    opts = { cli: true, cwd }
+  const { cwd, paths } = arg
+  const count = paths.length
 
-  if (await dirtyTree(prop, arg, dot)) {
-    return returnWait(prop, count, dot)
+  var err, out
+  ;[err, out] = await dot.publishDirtyStatus(prop, arg, dot)
+
+  if (err || out) {
+    return cancelWait(dot)
   }
 
-  const { out } = await dot.spawn(prop, {
-    args: ["describe"],
-    command: "git",
-    ...opts,
-  })
+  ;[err, out] = await dot.publishReleaseStatus(
+    prop,
+    arg,
+    dot
+  )
 
-  const released = out.match(/\.\d+\r\n$/)
-
-  if (released) {
-    return returnWait(prop, count, dot)
+  if (err || out) {
+    return cancelWait(dot)
   }
 
-  const { code } = await dot.spawn(prop, {
-    args: ["version", version || "patch"],
-    command: "npm",
-    ...opts,
-  })
+  ;[err, out] = await dot.publishNpmVersion(prop, arg, dot)
 
-  await dot.wait("waitForPatches", { count })
-
-  if (code > 0) {
-    return returnWait(prop, count, dot)
+  if (err) {
+    return cancelWait(dot)
   }
 
-  if (!arg.versionRan) {
-    arg.versionRan = true
+  await dot.wait("npmVersion", { count })
+
+  if (!dot.state.versionRan) {
+    dot.state.versionRan = true
+
     await dot.cliEmit(prop, {
       argv: {
         eventId: "version",
@@ -61,41 +66,41 @@ async function publish(prop, arg, dot) {
     })
   }
 
-  await dot.wait("waitForVersion", { count })
+  await dot.wait("dotVersion", { count })
 
-  await dot.spawn(prop, {
-    args: ["commit", "-a", "--amend", "--no-edit"],
-    command: "git",
-    ...opts,
-  })
+  const newVersion = await dot.publishReadVersion(prop, arg)
+  const newArg = { cwd, newVersion }
+
+  ;[err, out] = await dot.publishGitCommit(
+    prop,
+    newArg,
+    dot
+  )
+
+  if (err) {
+    return cancelWait(dot)
+  }
+
+  ;[err, out] = await dot.publishGitTag(prop, newArg, dot)
+
+  if (err) {
+    return cancelWait(dot)
+  }
 
   await Promise.all([
-    dot.spawn(prop, {
-      args: ["push", "origin", "master"],
-      command: "git",
-      ...opts,
-    }),
+    dot.publishGitPush({ branch: newVersion, cwd }),
+    dot.publishGitPush({ branch: "master", cwd }),
     dot.spawn(prop, {
       args: ["publish"],
       command: "npm",
-      ...opts,
+      cwd,
     }),
   ])
 }
 
-async function dirtyTree(prop, arg, dot) {
-  const { code } = await dot.spawn(prop, {
-    args: ["diff", "--exit-code"],
-    command: "git",
-    cwd: arg.cwd,
-  })
-
-  return code !== 0
-}
-
-function returnWait(prop, arg, dot) {
+function cancelWait(dot) {
   return Promise.all([
-    dot.wait("waitForPatches", { count: arg }),
-    dot.wait("waitForVersion", { count: arg }),
+    dot.wait("npmVersion"),
+    dot.wait("dotVersion"),
   ])
 }
