@@ -53,29 +53,34 @@ module.exports = function(dot) {
 }
 
 async function publish(prop, arg, dot) {
-  const { cwd, paths } = arg
+  const { cwd, paths, version } = arg
   const count = paths.length
 
   var err, out
-  ;[err, out] = await dot.publishDirtyStatus(prop, arg)
+  ;[err, out] = await dot.publishDirtyStatus(prop, { cwd })
 
   if (err || out) {
     return dot.publishWaitForAll()
   }
 
-  ;[err, out] = await dot.publishReadBranch(prop, arg)
+  ;[err, out] = await dot.publishReadBranch(prop, { cwd })
 
   if (err || out !== "master") {
     return dot.publishWaitForAll()
   }
 
-  ;[err, out] = await dot.publishReleaseStatus(prop, arg)
+  ;[err, out] = await dot.publishReleaseStatus(prop, {
+    cwd,
+  })
 
   if (err || out) {
-    return dot.publishCommitVersionChanges(prop, arg)
+    return dot.publishCommitVersionChanges(prop, { cwd })
   }
 
-  ;[err, out] = await dot.publishNpmVersion(prop, arg)
+  ;[err, out] = await dot.publishNpmVersion(prop, {
+    cwd,
+    version,
+  })
 
   if (err) {
     return dot.publishWaitForAll()
@@ -96,7 +101,9 @@ async function publish(prop, arg, dot) {
 
   await dot.wait("dotVersion", { count })
 
-  const newVersion = await dot.publishReadVersion(prop, arg)
+  const newVersion = await dot.publishReadVersion(prop, {
+    cwd,
+  })
 
   ;[err, out] = await dot.publishGitCommit(prop, {
     cwd,
