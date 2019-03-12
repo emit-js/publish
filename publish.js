@@ -32,29 +32,25 @@ async function publish(prop, arg, dot) {
   const count = paths.length
 
   var err, out
-  ;[err, out] = await dot.publishDirtyStatus(prop, arg, dot)
+  ;[err, out] = await dot.publishDirtyStatus(prop, arg)
 
   if (err || out) {
     return cancelWait(dot)
   }
 
-  ;[err, out] = await dot.publishReadBranch(prop, arg, dot)
+  ;[err, out] = await dot.publishReadBranch(prop, arg)
 
   if (err || out !== "master") {
     return cancelWait(dot)
   }
 
-  ;[err, out] = await dot.publishReleaseStatus(
-    prop,
-    arg,
-    dot
-  )
+  ;[err, out] = await dot.publishReleaseStatus(prop, arg)
 
   if (err || out) {
     return cancelWait(dot)
   }
 
-  ;[err, out] = await dot.publishNpmVersion(prop, arg, dot)
+  ;[err, out] = await dot.publishNpmVersion(prop, arg)
 
   if (err) {
     return cancelWait(dot)
@@ -78,17 +74,13 @@ async function publish(prop, arg, dot) {
   const newVersion = await dot.publishReadVersion(prop, arg)
   const newArg = { cwd, newVersion }
 
-  ;[err, out] = await dot.publishGitCommit(
-    prop,
-    newArg,
-    dot
-  )
+  ;[err, out] = await dot.publishGitCommit(prop, newArg)
 
   if (err) {
     return cancelWait(dot)
   }
 
-  ;[err, out] = await dot.publishGitTag(prop, newArg, dot)
+  ;[err, out] = await dot.publishGitTag(prop, newArg)
 
   if (err) {
     return cancelWait(dot)
