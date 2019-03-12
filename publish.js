@@ -1,7 +1,24 @@
+const describe = `
+If a project:
+
+* has a clean git tree
+* is on master
+* is untagged (unreleased)
+
+then:
+
+* bump the npm version (default semver: --version=patch)
+* sync all versions using https://github.com/@dot-event/version
+* git commit, tag, push
+* npm publish
+`
+
 module.exports = function(dot) {
   if (dot.publish) {
     return
   }
+
+  dot("describe", "publish", { arg: describe })
 
   dot("dependencies", "publish", {
     arg: [
@@ -15,6 +32,8 @@ module.exports = function(dot) {
     v: ["version"],
   })
 
+  dot.any("publish", publish)
+
   require("./publishDirtyStatus")(dot)
   require("./publishGitCommit")(dot)
   require("./publishGitPush")(dot)
@@ -23,8 +42,6 @@ module.exports = function(dot) {
   require("./publishReadBranch")(dot)
   require("./publishReadVersion")(dot)
   require("./publishReleaseStatus")(dot)
-
-  dot.any("publish", publish)
 }
 
 async function publish(prop, arg, dot) {
