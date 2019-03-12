@@ -6,7 +6,7 @@ module.exports = function(dot) {
   dot.any("publishWaitForAll", publishWaitForAll)
 }
 
-function publishWaitForAll(dot) {
+function publishWaitForAll(prop, arg, dot) {
   return Promise.all([
     dot.wait("npmVersion"),
     dot.wait("dotVersion"),
