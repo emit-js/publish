@@ -16,7 +16,7 @@
   "homepage": "https://github.com/dot-event/publish#readme",
   "main": "dist/publish.js",
   "scripts": {
-    "build": "babel *.js --out-dir dist --source-maps",
+    "build": "rm -rf dist; babel *.js --out-dir dist --source-maps",
     "prepublishOnly": "npm run build",
     "fix": "npm run lint -- --fix",
     "lint": "eslint --ignore-path .gitignore --ext=js .",
