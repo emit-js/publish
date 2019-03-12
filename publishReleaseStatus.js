@@ -7,15 +7,16 @@ module.exports = function(dot) {
 }
 
 async function publishReleaseStatus(prop, arg, dot) {
+  const { cwd } = arg
   const { code, out } = await dot.spawn(prop, {
     args: ["describe"],
     command: "git",
-    cwd: arg.cwd,
+    cwd,
   })
 
   if (code > 0) {
     return [true, out]
   }
 
-  return [false, out.match(/\.\d+\r\n$/)]
+  return [false, !!out.match(/\.\d+\r\n$/)]
 }
