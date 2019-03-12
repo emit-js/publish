@@ -17,6 +17,15 @@ test("publishDirtyStatus", async () => {
   expect(dirty).toEqual(expect.any(Boolean))
 })
 
+test("publishReadBranch", async () => {
+  const cwd = join(__dirname, "../")
+  const [err, branch] = await dot.publishReadBranch({
+    cwd,
+  })
+  expect(err).toBe(false)
+  expect(branch).toEqual(expect.any(String))
+})
+
 test("publishReadVersion", async () => {
   const cwd = join(__dirname, "../")
   const version = await dot.publishReadVersion({

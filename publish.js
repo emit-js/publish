@@ -20,6 +20,7 @@ module.exports = function(dot) {
   require("./publishGitPush")(dot)
   require("./publishGitTag")(dot)
   require("./publishNpmVersion")(dot)
+  require("./publishReadBranch")(dot)
   require("./publishReadVersion")(dot)
   require("./publishReleaseStatus")(dot)
 
@@ -34,6 +35,12 @@ async function publish(prop, arg, dot) {
   ;[err, out] = await dot.publishDirtyStatus(prop, arg, dot)
 
   if (err || out) {
+    return cancelWait(dot)
+  }
+
+  ;[err, out] = await dot.publishReadBranch(prop, arg, dot)
+
+  if (err || out !== "master") {
     return cancelWait(dot)
   }
 
