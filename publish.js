@@ -1,5 +1,5 @@
 const describe = `
-A project is ready for release if:
+A project is ready for release if it:
 
 * has a clean git tree
 * is on master
