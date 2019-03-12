@@ -1,22 +1,27 @@
 const describe = `
-If a project:
+A project is ready for release if:
 
 * has a clean git tree
 * is on master
 * is untagged (unreleased)
 
-then:
+If a project is ready for release:
 
 * bump the npm version (default semver: --version=patch)
 * sync all versions using @dot-event/version
 * git commit, tag, push
 * npm publish
 
-Otherwise, if the project has a clean git tree and is on
-master, but is tagged (released):
+If the project has a clean git tree and is on master, but
+tagged (released):
 
 * wait for version sync
 * git commit if dependencies changed
+
+After all of the above steps finish:
+
+* npm install
+* git commit package-lock.json
 `
 
 module.exports = function(dot) {
@@ -47,6 +52,7 @@ module.exports = function(dot) {
   require("./publishGitTag")(dot)
   require("./publishNpmVersion")(dot)
   require("./publishReadBranch")(dot)
+  require("./publishReadLastCommit")(dot)
   require("./publishReadVersion")(dot)
   require("./publishReleaseStatus")(dot)
   require("./publishWaitForAll")(dot)

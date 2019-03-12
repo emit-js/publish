@@ -18,5 +18,22 @@ async function publishReleaseStatus(prop, arg, dot) {
     return [true, out]
   }
 
-  return [false, !!out.match(/\.\d+\r\n$/)]
+  const released = !!out.match(/\.\d+\r\n$/)
+
+  if (released) {
+    return [false, true]
+  }
+
+  const oneAway = !!out.match(/\.\d+-1-/)
+
+  if (oneAway) {
+    const [err, msg] = await dot.publishReadLastCommit({
+      cwd,
+    })
+    if (!err && msg.match(/\rpackage-lock\.json/)) {
+      return [false, true]
+    }
+  }
+
+  return [false, false]
 }
