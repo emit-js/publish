@@ -9,7 +9,7 @@ const dependencies = [
 ]
 
 const describe = `
-  A project is ready for release if it:
+  A project is ready for publish if it:
 
     — has a clean git tree
     — is on master
@@ -17,7 +17,7 @@ const describe = `
 
   If a project is ready for release:
 
-    — bump the npm version, defaults to --version=patch
+    — bump the npm version, default to --version=patch
     — sync all versions using @dot-event/version
     — git commit, tag, push
     — npm publish
