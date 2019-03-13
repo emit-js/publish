@@ -50,6 +50,7 @@ module.exports = function(dot) {
   require("./publishGitCommit")(dot)
   require("./publishGitPush")(dot)
   require("./publishGitTag")(dot)
+  require("./publishNpmInstallCommit")(dot)
   require("./publishNpmVersion")(dot)
   require("./publishReadBranch")(dot)
   require("./publishReadLastCommit")(dot)
