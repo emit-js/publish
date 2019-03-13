@@ -2,25 +2,25 @@ const released = "✅ published"
 const notReleased = "❌ unreleased"
 const notApplicable = "🤔 n/a"
 
-module.exports = function(dot, opts) {
+module.exports = function(dot) {
   if (dot.publishReleaseStatus) {
     return
-  }
-
-  if (opts && opts.cli) {
-    dot("logLevel", "cliEmitOutput", { info: "warn" })
   }
 
   dot.any("publishReleaseStatus", publishReleaseStatus)
 }
 
 async function publishReleaseStatus(prop, arg, dot) {
-  const { cwd } = arg
+  const { cli, cwd } = arg
   const { code, out } = await dot.spawn(prop, {
     args: ["describe"],
     command: "git",
     cwd,
   })
+
+  if (cli) {
+    dot("logLevel", "cliEmitOutput", { info: "warn" })
+  }
 
   if (code > 0) {
     return { err: true, message: notApplicable, out: false }
