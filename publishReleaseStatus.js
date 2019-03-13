@@ -1,3 +1,6 @@
+const released = "✅ Released"
+const notReleased = "❌ Not released"
+
 module.exports = function(dot) {
   if (dot.publishReleaseStatus) {
     return
@@ -15,25 +18,26 @@ async function publishReleaseStatus(prop, arg, dot) {
   })
 
   if (code > 0) {
-    return { err: true, out: false }
+    return { err: true, message: notReleased, out: false }
   }
 
-  const released = !!out.match(/\.\d+\r\n$/)
-
-  if (released) {
-    return { err: false, out: true }
+  if (out.match(/\.\d+\r\n$/)) {
+    return { err: false, message: released, out: true }
   }
 
   const oneAway = !!out.match(/\.\d+-1-/)
 
   if (oneAway) {
-    const [err, msg] = await dot.publishReadLastCommit({
+    const {
+      err,
+      out: msg,
+    } = await dot.publishReadLastCommit({
       cwd,
     })
     if (!err && msg.match(/\rpackage-lock\.json/)) {
-      return { err: false, out: true }
+      return { err: false, message: released, out: true }
     }
   }
 
-  return { err: false, out: false }
+  return { err: false, message: notReleased, out: false }
 }
