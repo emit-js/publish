@@ -1,5 +1,6 @@
-const released = "✅ Released"
-const notReleased = "❌ Not released"
+const released = "✅ published"
+const notReleased = "❌ unreleased"
+const notApplicable = "🤔 n/a"
 
 module.exports = function(dot) {
   if (dot.publishReleaseStatus) {
@@ -18,7 +19,7 @@ async function publishReleaseStatus(prop, arg, dot) {
   })
 
   if (code > 0) {
-    return { err: true, message: notReleased, out: false }
+    return { err: true, message: notApplicable, out: false }
   }
 
   if (out.match(/\.\d+\r\n$/)) {
