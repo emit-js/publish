@@ -2,6 +2,12 @@ const args = {
   v: ["version"],
 }
 
+const dependencies = [
+  "@dot-event/spawn",
+  "@dot-event/version",
+  "@dot-event/wait",
+]
+
 const describe = `
   A project is ready for release if it:
 
@@ -34,16 +40,8 @@ module.exports = function(dot) {
   }
 
   dot("alias", "publish", args)
-
   dot("describe", "publish", { arg: describe })
-
-  dot("dependencies", "publish", {
-    arg: [
-      "@dot-event/spawn",
-      "@dot-event/version",
-      "@dot-event/wait",
-    ],
-  })
+  dot("dependencies", "publish", { arg: dependencies })
 
   dot.any("publish", publish)
 
