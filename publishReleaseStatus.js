@@ -15,13 +15,13 @@ async function publishReleaseStatus(prop, arg, dot) {
   })
 
   if (code > 0) {
-    return [true, out]
+    return { err: true, out: false }
   }
 
   const released = !!out.match(/\.\d+\r\n$/)
 
   if (released) {
-    return [false, true]
+    return { err: false, out: true }
   }
 
   const oneAway = !!out.match(/\.\d+-1-/)
@@ -31,9 +31,9 @@ async function publishReleaseStatus(prop, arg, dot) {
       cwd,
     })
     if (!err && msg.match(/\rpackage-lock\.json/)) {
-      return [false, true]
+      return { err: false, out: true }
     }
   }
 
-  return [false, false]
+  return { err: false, out: false }
 }

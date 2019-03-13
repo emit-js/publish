@@ -12,18 +12,18 @@ publish(dot)
 
 test("publishDirtyStatus", async () => {
   const cwd = join(__dirname, "../")
-  const [err, dirty] = await dot.publishDirtyStatus({ cwd })
+  const { err, out } = await dot.publishDirtyStatus({ cwd })
   expect(err).toBe(false)
-  expect(dirty).toEqual(expect.any(Boolean))
+  expect(out).toEqual(expect.any(Boolean))
 })
 
 test("publishReadBranch", async () => {
   const cwd = join(__dirname, "../")
-  const [err, branch] = await dot.publishReadBranch({
+  const { err, out } = await dot.publishReadBranch({
     cwd,
   })
   expect(err).toBe(false)
-  expect(branch).toEqual(expect.any(String))
+  expect(out).toEqual(expect.any(String))
 })
 
 test("publishReadVersion", async () => {
@@ -36,9 +36,9 @@ test("publishReadVersion", async () => {
 
 test("publishReleaseStatus", async () => {
   const cwd = join(__dirname, "../")
-  const [err, status] = await dot.publishReleaseStatus({
+  const { err, out } = await dot.publishReleaseStatus({
     cwd,
   })
   expect(err).toBe(false)
-  expect(status).toEqual(expect.any(Boolean))
+  expect(out).toEqual(expect.any(Boolean))
 })

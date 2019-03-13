@@ -13,5 +13,5 @@ async function publishGitCommit(prop, arg, dot) {
     command: "git",
     cwd,
   })
-  return [code > 0, out]
+  return { err: code > 0, out }
 }

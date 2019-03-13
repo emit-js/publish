@@ -13,5 +13,5 @@ async function publishDirtyStatus(prop, arg, dot) {
     command: "git",
     cwd,
   })
-  return [false, code !== 0]
+  return { err: false, out: code !== 0 }
 }

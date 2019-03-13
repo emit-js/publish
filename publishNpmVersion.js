@@ -17,5 +17,5 @@ async function publishNpmVersion(prop, arg, dot) {
     command: "npm",
     cwd,
   })
-  return [code > 0, out]
+  return { err: code > 0, out }
 }

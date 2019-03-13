@@ -13,5 +13,5 @@ async function publishReadBranch(prop, arg, dot) {
     command: "git",
     cwd,
   })
-  return [code > 0, out.trim()]
+  return { err: code > 0, out: out.trim() }
 }
