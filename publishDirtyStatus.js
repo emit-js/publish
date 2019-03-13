@@ -12,6 +12,7 @@ async function publishDirtyStatus(prop, arg, dot) {
     args: ["diff", "--exit-code"],
     command: "git",
     cwd,
+    quiet: true,
   })
   return { err: false, out: code !== 0 }
 }
