@@ -10,5 +10,6 @@ function publishWaitForAll(prop, arg, dot) {
   return Promise.all([
     dot.wait("npmVersion"),
     dot.wait("dotVersion"),
+    dot.wait("npmPublish"),
   ])
 }

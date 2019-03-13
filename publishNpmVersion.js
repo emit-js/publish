@@ -8,7 +8,7 @@ module.exports = function(dot) {
 
 async function publishNpmVersion(prop, arg, dot) {
   const { cwd, version } = arg
-  const { code, out } = await dot.spawn(prop, {
+  return await dot.spawn(prop, {
     args: [
       "version",
       version || "patch",
@@ -17,5 +17,4 @@ async function publishNpmVersion(prop, arg, dot) {
     command: "npm",
     cwd,
   })
-  return { err: code > 0, out }
 }

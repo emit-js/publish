@@ -11,9 +11,15 @@ module.exports = function(dot) {
 
 async function publishCommitVersionChanges(prop, arg, dot) {
   const { cwd } = arg
+
   await dot.publishWaitForAll()
-  await dot.publishGitCommit(prop, {
+
+  const { dirty } = await dot.publishGitCommit(prop, {
     cwd,
     message: "Dependency updates",
   })
+
+  if (dirty) {
+    await dot.publishNpmInstallCommit(prop, { cwd })
+  }
 }

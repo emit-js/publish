@@ -8,10 +8,9 @@ module.exports = function(dot) {
 
 async function publishGitPush(prop, arg, dot) {
   const { branch, cwd } = arg
-  const { code, out } = dot.spawn(prop, {
+  return dot.spawn(prop, {
     args: ["push", "origin", branch],
     command: "git",
     cwd,
   })
-  return { err: code > 0, out }
 }

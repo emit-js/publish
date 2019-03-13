@@ -8,10 +8,10 @@ module.exports = function(dot) {
 
 async function publishReadBranch(prop, arg, dot) {
   const { cwd } = arg
-  const { code, out } = await dot.spawn(prop, {
+  const { err, out } = await dot.spawn(prop, {
     args: ["rev-parse", "--abbrev-ref", "HEAD"],
     command: "git",
     cwd,
   })
-  return { err: code > 0, out: out.trim() }
+  return { err, out: out.trim() }
 }

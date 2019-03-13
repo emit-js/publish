@@ -9,20 +9,23 @@ module.exports = function(dot) {
 async function publishGitCommit(prop, arg, dot) {
   const { cwd, message } = arg
 
-  var code, err, out
-  ;({ err, out } = await dot.publishDirtyStatus(prop, {
-    cwd,
-  }))
+  var dirty, err, out
+  ;({ err, out: dirty } = await dot.publishDirtyStatus(
+    prop,
+    {
+      cwd,
+    }
+  ))
 
-  if (!err && out) {
-    ;({ code, out } = await dot.spawn(prop, {
+  if (!err && dirty) {
+    ;({ err, out } = await dot.spawn(prop, {
       args: ["commit", "-a", "-m", message],
       command: "git",
       cwd,
     }))
 
-    return { err: code > 0, out }
+    return { dirty, err, out }
   }
 
-  return { err, out }
+  return { dirty, err, out }
 }

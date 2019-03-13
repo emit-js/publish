@@ -15,7 +15,7 @@ const describe = `
     — is on master
     — is untagged (unreleased)
 
-  If a project is ready for release:
+  For each project that is ready for release:
 
     — bump the npm version, default to --version=patch
     — sync all versions using @dot-event/version
@@ -143,4 +143,7 @@ async function publish(prop, arg, dot) {
       log: true,
     }),
   ])
+
+  await dot.wait("npmPublish", { count })
+  await dot.publishNpmInstallCommit({ cwd })
 }

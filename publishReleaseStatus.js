@@ -12,7 +12,7 @@ module.exports = function(dot) {
 
 async function publishReleaseStatus(prop, arg, dot) {
   const { cli, cwd } = arg
-  const { code, out } = await dot.spawn(prop, {
+  const { err, out } = await dot.spawn(prop, {
     args: ["describe"],
     command: "git",
     cwd,
@@ -22,7 +22,7 @@ async function publishReleaseStatus(prop, arg, dot) {
     dot("logLevel", "cliEmitOutput", { info: "warn" })
   }
 
-  if (code > 0) {
+  if (err) {
     return { err: true, message: notApplicable, out: false }
   }
 
