@@ -1,33 +1,35 @@
+const args = {
+  v: ["version"],
+}
+
 const describe = `
-A project is ready for release if it:
+  A project is ready for release if it:
+    — has a clean git tree
+    — is on master
+    — is untagged (unreleased)
 
-* has a clean git tree
-* is on master
-* is untagged (unreleased)
+  If a project is ready for release:
+    — bump the npm version, defaults to --version=patch
+    — sync all versions using @dot-event/version
+    — git commit, tag, push
+    — npm publish
 
-If a project is ready for release:
+  If the project has a clean git tree and is on master, but
+  tagged (released):
+    — wait for version sync
+    — git commit if dependencies changed
 
-* bump the npm version (default semver: --version=patch)
-* sync all versions using @dot-event/version
-* git commit, tag, push
-* npm publish
-
-If the project has a clean git tree and is on master, but
-tagged (released):
-
-* wait for version sync
-* git commit if dependencies changed
-
-After all of the above steps finish:
-
-* npm install
-* git commit package-lock.json
+  After all of the above steps finish:
+    — npm install
+    — git commit package-lock.json
 `
 
 module.exports = function(dot) {
   if (dot.publish) {
     return
   }
+
+  dot("alias", "publish", args)
 
   dot("describe", "publish", { arg: describe })
 
@@ -37,10 +39,6 @@ module.exports = function(dot) {
       "@dot-event/version",
       "@dot-event/wait",
     ],
-  })
-
-  dot("alias", "publish", {
-    v: ["version"],
   })
 
   dot.any("publish", publish)
