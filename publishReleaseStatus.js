@@ -2,9 +2,13 @@ const released = "✅ published"
 const notReleased = "❌ unreleased"
 const notApplicable = "🤔 n/a"
 
-module.exports = function(dot) {
+module.exports = function(dot, opts) {
   if (dot.publishReleaseStatus) {
     return
+  }
+
+  if (opts && opts.cli) {
+    dot("logLevel", "cliEmitOutput", { info: "warn" })
   }
 
   dot.any("publishReleaseStatus", publishReleaseStatus)
