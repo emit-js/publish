@@ -1,37 +1,42 @@
-const args = {
-  v: ["version"],
-}
+const args = [
+  [
+    "version",
+    "Semver level to bump package.json version",
+    { alias: "v", default: "patch" },
+  ],
+]
 
 const dependencies = [
+  "@dot-event/args",
   "@dot-event/spawn",
   "@dot-event/version",
   "@dot-event/wait",
 ]
 
 const describe = `
-  A project is ready for publish if it:
+  If a project is ready for publish:
 
-    — has a clean git tree
-    — is on master
-    — is untagged (unreleased)
+    * has a clean git tree
+    * is on master
+    * is untagged (unreleased)
 
-  For each project that is ready for release:
+  Then for each project:
 
-    — bump the npm version, default to --version=patch
-    — sync all versions using @dot-event/version
-    — git commit, tag, push
-    — npm publish
+    * bump the npm version
+    * sync all versions
+    * git commit, tag, push
+    * npm publish
 
-  If the project has a clean git tree and is on master, but
-  tagged (released):
+  If the project is ready for publish but tagged
+  (released):
 
-    — wait for version sync
-    — git commit if dependencies changed
+    * wait for version sync
+    * git commit if dependencies changed
 
   After all of the above steps finish:
-  
-    — npm install
-    — git commit package-lock.json
+
+    * npm install
+    * git commit package-lock.json
 `
 
 module.exports = function(dot) {
@@ -39,7 +44,7 @@ module.exports = function(dot) {
     return
   }
 
-  dot("alias", "publish", args)
+  dot("args", "publish", args)
   dot("describe", "publish", { arg: describe })
   dot("dependencies", "publish", { arg: dependencies })
 
