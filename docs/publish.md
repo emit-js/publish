@@ -15,13 +15,11 @@ args:
 
 #### Arguments
 
-{{argumentsSummary}}
-
-{{argumentsTable}}
+{{arguments}}
 
 #### Return value
 
-{{returnValueSummary}}
+{{returnValue}}
 
 #### Description
 
