@@ -20,6 +20,9 @@ module.exports = function(dot) {
       alias: ["_", "p"],
       default: [],
     },
+    status: {
+      alias: ["s"],
+    },
     version: {
       alias: "v",
       default: "patch",
@@ -54,13 +57,19 @@ async function publish(prop, arg, dot) {
   })
 
   return Promise.all(
-    paths.map(
-      async path =>
-        await dot.publishProject(prop, {
+    paths.map(async path => {
+      if (arg.status) {
+        return await dot.publishReleaseStatus(prop, {
+          cli: true,
+          cwd: path,
+        })
+      } else {
+        return await dot.publishProject(prop, {
           ...arg,
           path,
           paths,
         })
-    )
+      }
+    })
   )
 }

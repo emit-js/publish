@@ -1,3 +1,5 @@
+import { relative } from "path"
+
 const released = "✅ published"
 const notReleased = "❌ unreleased"
 const notApplicable = "🤔 n/a"
@@ -12,22 +14,33 @@ module.exports = function(dot) {
 
 async function publishReleaseStatus(prop, arg, dot) {
   const { cli, cwd } = arg
+
+  if (cli) {
+    dot("logLevel", "publishStatus", { debug: "info" })
+    dot("logLevel", "spawnOutput", { info: "debug" })
+  }
+
   const { err, out } = await dot.spawn(prop, {
     args: ["describe"],
     command: "git",
     cwd,
   })
 
-  if (cli) {
-    dot("logLevel", "cliEmitOutput", { info: "warn" })
-  }
+  const rel = relative(process.cwd(), cwd)
 
   if (err) {
-    return { err: true, message: notApplicable, out: false }
+    dot("publishStatus", rel, {
+      level: "warn",
+      message: notApplicable,
+    })
+    return { err: true, out: false }
   }
 
   if (out.match(/\.\d+\r\n$/)) {
-    return { err: false, message: released, out: true }
+    dot("publishStatus", rel, {
+      arg: released,
+    })
+    return { err: false, out: true }
   }
 
   const oneAway = !!out.match(/\.\d+-1-/)
@@ -40,9 +53,15 @@ async function publishReleaseStatus(prop, arg, dot) {
       cwd,
     })
     if (!err && msg.match(/\rpackage-lock\.json/)) {
+      dot("publishStatus", rel, {
+        arg: released,
+      })
       return { err: false, message: released, out: true }
     }
   }
 
+  dot("publishStatus", rel, {
+    arg: notReleased,
+  })
   return { err: false, message: notReleased, out: false }
 }
