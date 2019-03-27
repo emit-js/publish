@@ -33,8 +33,6 @@ module.exports = function(dot) {
     arg: join(__dirname, "../docs/publish.md"),
   })
 
-  dot.any("publish", publish)
-
   require("./publishCommitVersionChanges")(dot)
   require("./publishDirtyStatus")(dot)
   require("./publishGitCommit")(dot)
@@ -48,12 +46,14 @@ module.exports = function(dot) {
   require("./publishReadVersion")(dot)
   require("./publishReleaseStatus")(dot)
   require("./publishWaitForAll")(dot)
+
+  dot.any("publish", publish)
 }
 
 async function publish(prop, arg, dot) {
   const paths = await dot.glob(prop, {
     absolute: true,
-    pattern: "{" + arg.paths.join(",") + "}",
+    pattern: arg.paths,
   })
 
   return Promise.all(
@@ -66,7 +66,7 @@ async function publish(prop, arg, dot) {
       } else {
         return await dot.publishProject(prop, {
           ...arg,
-          path,
+          cwd: path,
           paths,
         })
       }
