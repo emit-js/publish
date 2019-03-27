@@ -1,6 +1,6 @@
 {
   "name": "@dot-event/publish",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "dot-event package publish",
   "keywords": [
     "dot-event",
@@ -36,8 +36,8 @@
     "@babel/preset-env": "7.3.4",
     "@dot-event/args": "1.0.3",
     "@dot-event/glob": "0.0.7",
-    "@dot-event/log": "1.0.32",
-    "@dot-event/spawn": "3.0.21",
+    "@dot-event/log": "1.0.33",
+    "@dot-event/spawn": "3.0.22",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
     "dot-event": "3.2.1",
