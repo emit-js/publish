@@ -28,7 +28,7 @@ async function publishReleaseStatus(prop, arg, dot) {
 
   const rel = relative(process.cwd(), cwd)
 
-  if (err) {
+  if (err && out.match(/not a git repository/)) {
     dot("publishStatus", rel, {
       level: "warn",
       message: notApplicable,
