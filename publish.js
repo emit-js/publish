@@ -1,5 +1,3 @@
-import { join } from "path"
-
 module.exports = function(dot) {
   if (dot.publish) {
     return
@@ -29,9 +27,7 @@ module.exports = function(dot) {
     },
   })
 
-  dot("docs", "publish", {
-    arg: join(__dirname, "../docs/publish.md"),
-  })
+  dot("returns", "publish", { async: "array" })
 
   require("./publishCommitVersionChanges")(dot)
   require("./publishDirtyStatus")(dot)

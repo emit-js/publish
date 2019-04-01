@@ -7,22 +7,6 @@ args:
     describe: Semver level to bump package.json version
 ---
 
-### publish
-
-#### Dependencies
-
-{{dependencies}}
-
-#### Arguments
-
-{{arguments}}
-
-#### Return value
-
-{{returnValue}}
-
-#### Description
-
 If a project is ready for publish:
 
 - has a clean git tree
