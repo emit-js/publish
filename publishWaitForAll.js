@@ -8,8 +8,8 @@ module.exports = function(emit) {
 
 function publishWaitForAll(arg, prop, emit) {
   return Promise.all([
-    emit.wait("npmVersion"),
-    emit.wait("emitVersion"),
-    emit.wait("npmPublish"),
+    emit.wait("npmVersion", null),
+    emit.wait("emitVersion", null),
+    emit.wait("npmPublish", null),
   ])
 }
