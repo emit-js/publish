@@ -1,9 +1,9 @@
 {
   "name": "@emit-js/publish",
   "version": "0.0.26",
-  "description": "emit package publish",
+  "description": "emit package publisher",
   "keywords": [
-    "@emit-js/emit",
+    "emit",
     "package",
     "publish"
   ],
