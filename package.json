@@ -1,6 +1,6 @@
 {
   "name": "@emit-js/publish",
-  "version": "0.0.27",
+  "version": "0.0.28",
   "description": "emit package publisher",
   "keywords": [
     "emit",
@@ -37,7 +37,7 @@
     "@emit-js/args": "1.0.5",
     "@emit-js/glob": "0.0.10",
     "@emit-js/log": "1.0.39",
-    "@emit-js/spawn": "3.0.27",
+    "@emit-js/spawn": "3.0.28",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
     "@emit-js/emit": "3.2.9",
