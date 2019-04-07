@@ -1,15 +1,15 @@
-# @dot-event/publish
+# @emit-js/publish
 
 ![publish](publish.gif)
 
 ## Install
 
 ```bash
-npm install -g @dot-event/cli @dot-event/publish
+npm install -g @emit-js/cli @emit-js/publish
 ```
 
 ## Usage
 
 ```bash
-dot publish [glob]
+emit publish [glob]
 ```

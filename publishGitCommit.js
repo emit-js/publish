@@ -1,16 +1,16 @@
-module.exports = function(dot) {
-  if (dot.publishGitCommit) {
+module.exports = function(emit) {
+  if (emit.publishGitCommit) {
     return
   }
 
-  dot.any("publishGitCommit", publishGitCommit)
+  emit.any("publishGitCommit", publishGitCommit)
 }
 
-async function publishGitCommit(prop, arg, dot) {
+async function publishGitCommit(arg, prop, emit) {
   const { cwd, message } = arg
 
   var dirty, err, out
-  ;({ err, out: dirty } = await dot.publishDirtyStatus(
+  ;({ err, out: dirty } = await emit.publishDirtyStatus(
     prop,
     {
       cwd,
@@ -18,7 +18,7 @@ async function publishGitCommit(prop, arg, dot) {
   ))
 
   if (!err && dirty) {
-    ;({ err, out } = await dot.spawn(prop, {
+    ;({ err, out } = await emit.spawn(prop, {
       args: ["commit", "-a", "-m", message],
       command: "git",
       cwd,

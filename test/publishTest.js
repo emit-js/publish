@@ -3,9 +3,9 @@
 import { join } from "path"
 
 test("publishDirtyStatus", async () => {
-  const dot = require("./dot")()
+  const emit = require("./emit")()
 
-  const { err, out } = await dot.publishDirtyStatus({
+  const { err, out } = await emit.publishDirtyStatus({
     cwd: join(__dirname, "../"),
   })
 
@@ -14,9 +14,9 @@ test("publishDirtyStatus", async () => {
 })
 
 test("publishReadBranch", async () => {
-  const dot = require("./dot")()
+  const emit = require("./emit")()
 
-  const { err, out } = await dot.publishReadBranch({
+  const { err, out } = await emit.publishReadBranch({
     cwd: join(__dirname, "../"),
   })
 
@@ -25,9 +25,9 @@ test("publishReadBranch", async () => {
 })
 
 test("publishReadVersion", async () => {
-  const dot = require("./dot")()
+  const emit = require("./emit")()
 
-  const version = await dot.publishReadVersion({
+  const version = await emit.publishReadVersion({
     cwd: join(__dirname, "../"),
   })
 
@@ -35,9 +35,9 @@ test("publishReadVersion", async () => {
 })
 
 test("publishReleaseStatus", async () => {
-  const dot = require("./dot")()
+  const emit = require("./emit")()
 
-  const { err, out } = await dot.publishReleaseStatus({
+  const { err, out } = await emit.publishReleaseStatus({
     cwd: join(__dirname, "../"),
   })
 

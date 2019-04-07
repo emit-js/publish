@@ -1,14 +1,14 @@
-module.exports = function(dot) {
-  if (dot.publishDirtyStatus) {
+module.exports = function(emit) {
+  if (emit.publishDirtyStatus) {
     return
   }
 
-  dot.any("publishDirtyStatus", publishDirtyStatus)
+  emit.any("publishDirtyStatus", publishDirtyStatus)
 }
 
-async function publishDirtyStatus(prop, arg, dot) {
+async function publishDirtyStatus(arg, prop, emit) {
   const { cwd } = arg
-  const { code } = await dot.spawn(prop, {
+  const { code } = await emit.spawn(prop, {
     args: ["diff", "--exit-code"],
     command: "git",
     cwd,

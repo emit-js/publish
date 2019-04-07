@@ -1,14 +1,14 @@
-module.exports = function(dot) {
-  if (dot.publishReadLastCommit) {
+module.exports = function(emit) {
+  if (emit.publishReadLastCommit) {
     return
   }
 
-  dot.any("publishReadLastCommit", publishReadLastCommit)
+  emit.any("publishReadLastCommit", publishReadLastCommit)
 }
 
-async function publishReadLastCommit(prop, arg, dot) {
+async function publishReadLastCommit(arg, prop, emit) {
   const { cwd } = arg
-  return await dot.spawn(prop, {
+  return await emit.spawn(prop, {
     args: ["log", "-1", "--pretty=%B"],
     command: "git",
     cwd,

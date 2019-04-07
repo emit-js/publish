@@ -1,14 +1,14 @@
-module.exports = function(dot) {
-  if (dot.publishNpmVersion) {
+module.exports = function(emit) {
+  if (emit.publishNpmVersion) {
     return
   }
 
-  dot.any("publishNpmVersion", publishNpmVersion)
+  emit.any("publishNpmVersion", publishNpmVersion)
 }
 
-async function publishNpmVersion(prop, arg, dot) {
+async function publishNpmVersion(arg, prop, emit) {
   const { cwd, version } = arg
-  return await dot.spawn(prop, {
+  return await emit.spawn(prop, {
     args: [
       "version",
       version || "patch",

@@ -1,25 +1,25 @@
-module.exports = function(dot) {
-  if (dot.publishNpmInstallCommit) {
+module.exports = function(emit) {
+  if (emit.publishNpmInstallCommit) {
     return
   }
 
-  dot.any(
+  emit.any(
     "publishNpmInstallCommit",
     publishNpmInstallCommit
   )
 }
 
-async function publishNpmInstallCommit(prop, arg, dot) {
+async function publishNpmInstallCommit(arg, prop, emit) {
   const { cwd } = arg
 
-  const { err } = await dot.spawn(prop, {
+  const { err } = await emit.spawn(prop, {
     args: ["install"],
     command: "npm",
     cwd,
   })
 
   if (!err) {
-    await dot.publishGitCommit(prop, {
+    await emit.publishGitCommit(prop, {
       cwd,
       message: "package-lock.json",
     })

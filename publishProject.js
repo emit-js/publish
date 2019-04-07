@@ -1,84 +1,84 @@
-module.exports = function(dot) {
-  if (dot.publishProject) {
+module.exports = function(emit) {
+  if (emit.publishProject) {
     return
   }
 
-  dot.any("publishProject", publishProject)
+  emit.any("publishProject", publishProject)
 }
 
-async function publishProject(prop, arg, dot) {
+async function publishProject(arg, prop, emit) {
   const { cwd, paths, version } = arg
   const count = paths.length
 
   var err, out
-  ;({ err, out } = await dot.publishDirtyStatus(prop, {
+  ;({ err, out } = await emit.publishDirtyStatus(prop, {
     cwd,
   }))
 
   if (err || out) {
-    return dot.publishWaitForAll()
+    return emit.publishWaitForAll()
   }
 
-  ;({ err, out } = await dot.publishReadBranch(prop, {
+  ;({ err, out } = await emit.publishReadBranch(prop, {
     cwd,
   }))
 
   if (err || out !== "master") {
-    return dot.publishWaitForAll()
+    return emit.publishWaitForAll()
   }
 
-  ;({ err, out } = await dot.publishReleaseStatus(prop, {
+  ;({ err, out } = await emit.publishReleaseStatus(prop, {
     cwd,
   }))
 
   if (err || out) {
-    return dot.publishCommitVersionChanges(prop, { cwd })
+    return emit.publishCommitVersionChanges(prop, { cwd })
   }
 
-  ;({ err } = await dot.publishNpmVersion(prop, {
+  ;({ err } = await emit.publishNpmVersion(prop, {
     cwd,
     version,
   }))
 
   if (err) {
-    return dot.publishWaitForAll()
+    return emit.publishWaitForAll()
   }
 
-  await dot.wait("npmVersion", { count })
+  await emit.wait("npmVersion", { count })
 
-  if (!dot.state.versionRan) {
-    dot.state.versionRan = true
-    await dot.version(prop, { paths })
+  if (!emit.state.versionRan) {
+    emit.state.versionRan = true
+    await emit.version(prop, { paths })
   }
 
-  await dot.wait("dotVersion", { count })
+  await emit.wait("emitVersion", { count })
 
-  const newVersion = await dot.publishReadVersion(prop, {
+  const newVersion = await emit.publishReadVersion(prop, {
     cwd,
   })
 
-  ;({ err } = await dot.publishGitCommit(prop, {
+  ;({ err } = await emit.publishGitCommit(prop, {
     cwd,
     message: newVersion,
   }))
 
   if (err) {
-    return dot.publishWaitForAll()
+    return emit.publishWaitForAll()
   }
 
-  ;({ err } = await dot.publishGitTag(prop, {
+  ;({ err } = await emit.publishGitTag(prop, {
     cwd,
     newVersion,
   }))
 
   if (err) {
-    return dot.publishWaitForAll()
+    return emit.publishWaitForAll()
   }
 
   await Promise.all([
-    dot.publishGitPush({ branch: newVersion, cwd }),
-    dot.publishGitPush({ branch: "master", cwd }),
-    dot.spawn(prop, {
+    emit.publishGitPush({ branch: newVersion, cwd }),
+    emit.publishGitPush({ branch: "master", cwd }),
+    emit.spawn(prop, {
       args: ["publish"],
       command: "npm",
       cwd,
@@ -86,6 +86,6 @@ async function publishProject(prop, arg, dot) {
     }),
   ])
 
-  await dot.wait("npmPublish", { count })
-  await dot.publishNpmInstallCommit({ cwd })
+  await emit.wait("npmPublish", { count })
+  await emit.publishNpmInstallCommit({ cwd })
 }

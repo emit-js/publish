@@ -1,14 +1,14 @@
-module.exports = function(dot) {
-  if (dot.publishGitTag) {
+module.exports = function(emit) {
+  if (emit.publishGitTag) {
     return
   }
 
-  dot.any("publishGitTag", publishGitTag)
+  emit.any("publishGitTag", publishGitTag)
 }
 
-async function publishGitTag(prop, arg, dot) {
+async function publishGitTag(arg, prop, emit) {
   const { cwd, newVersion } = arg
-  return await dot.spawn(prop, {
+  return await emit.spawn(prop, {
     args: ["tag", "-a", "-m", newVersion, newVersion],
     command: "git",
     cwd,

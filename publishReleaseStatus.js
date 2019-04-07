@@ -4,23 +4,23 @@ const released = "✅ published"
 const notReleased = "❌ unreleased"
 const notApplicable = "🤔 n/a"
 
-module.exports = function(dot) {
-  if (dot.publishReleaseStatus) {
+module.exports = function(emit) {
+  if (emit.publishReleaseStatus) {
     return
   }
 
-  dot.any("publishReleaseStatus", publishReleaseStatus)
+  emit.any("publishReleaseStatus", publishReleaseStatus)
 }
 
-async function publishReleaseStatus(prop, arg, dot) {
+async function publishReleaseStatus(arg, prop, emit) {
   const { cli, cwd } = arg
 
   if (cli) {
-    dot("logLevel", "publishStatus", { debug: "info" })
-    dot("logLevel", "spawnOutput", { info: "debug" })
+    emit("logLevel", "publishStatus", { debug: "info" })
+    emit("logLevel", "spawnOutput", { info: "debug" })
   }
 
-  const { err, out } = await dot.spawn(prop, {
+  const { err, out } = await emit.spawn(prop, {
     args: ["describe"],
     command: "git",
     cwd,
@@ -29,7 +29,7 @@ async function publishReleaseStatus(prop, arg, dot) {
   const rel = relative(process.cwd(), cwd)
 
   if (err && out.match(/not a git repository/)) {
-    dot("publishStatus", rel, {
+    emit("publishStatus", rel, {
       level: "warn",
       message: notApplicable,
     })
@@ -37,9 +37,7 @@ async function publishReleaseStatus(prop, arg, dot) {
   }
 
   if (out.match(/\.\d+\r\n$/)) {
-    dot("publishStatus", rel, {
-      arg: released,
-    })
+    emit("publishStatus", rel, released)
     return { err: false, out: true }
   }
 
@@ -49,19 +47,15 @@ async function publishReleaseStatus(prop, arg, dot) {
     const {
       err,
       out: msg,
-    } = await dot.publishReadLastCommit({
+    } = await emit.publishReadLastCommit({
       cwd,
     })
     if (!err && msg.match(/\rpackage-lock\.json/)) {
-      dot("publishStatus", rel, {
-        arg: released,
-      })
+      emit("publishStatus", rel, released)
       return { err: false, message: released, out: true }
     }
   }
 
-  dot("publishStatus", rel, {
-    arg: notReleased,
-  })
+  emit("publishStatus", rel, notReleased)
   return { err: false, message: notReleased, out: false }
 }

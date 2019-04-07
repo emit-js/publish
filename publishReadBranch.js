@@ -1,14 +1,14 @@
-module.exports = function(dot) {
-  if (dot.publishReadBranch) {
+module.exports = function(emit) {
+  if (emit.publishReadBranch) {
     return
   }
 
-  dot.any("publishReadBranch", publishReadBranch)
+  emit.any("publishReadBranch", publishReadBranch)
 }
 
-async function publishReadBranch(prop, arg, dot) {
+async function publishReadBranch(arg, prop, emit) {
   const { cwd } = arg
-  const { err, out } = await dot.spawn(prop, {
+  const { err, out } = await emit.spawn(prop, {
     args: ["rev-parse", "--abbrev-ref", "HEAD"],
     command: "git",
     cwd,

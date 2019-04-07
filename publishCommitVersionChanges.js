@@ -1,25 +1,29 @@
-module.exports = function(dot) {
-  if (dot.publishCommitVersionChanges) {
+module.exports = function(emit) {
+  if (emit.publishCommitVersionChanges) {
     return
   }
 
-  dot.any(
+  emit.any(
     "publishCommitVersionChanges",
     publishCommitVersionChanges
   )
 }
 
-async function publishCommitVersionChanges(prop, arg, dot) {
+async function publishCommitVersionChanges(
+  arg,
+  prop,
+  emit
+) {
   const { cwd } = arg
 
-  await dot.publishWaitForAll()
+  await emit.publishWaitForAll()
 
-  const { dirty } = await dot.publishGitCommit(prop, {
+  const { dirty } = await emit.publishGitCommit(prop, {
     cwd,
     message: "Dependency updates",
   })
 
   if (dirty) {
-    await dot.publishNpmInstallCommit(prop, { cwd })
+    await emit.publishNpmInstallCommit(prop, { cwd })
   }
 }

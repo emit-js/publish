@@ -1,19 +1,17 @@
-module.exports = function(dot) {
-  if (dot.publish) {
+module.exports = function(emit) {
+  if (emit.publish) {
     return
   }
 
-  dot("dependencies", "publish", {
-    arg: [
-      "@dot-event/args",
-      "@dot-event/glob",
-      "@dot-event/spawn",
-      "@dot-event/version",
-      "@dot-event/wait",
-    ],
-  })
+  emit("dependencies", "publish", [
+    "@emit-js/args",
+    "@emit-js/glob",
+    "@emit-js/spawn",
+    "@emit-js/version",
+    "@emit-js/wait",
+  ])
 
-  dot("args", "publish", {
+  emit("args", "publish", {
     paths: {
       alias: ["_", "p"],
       default: [],
@@ -27,27 +25,27 @@ module.exports = function(dot) {
     },
   })
 
-  dot("returns", "publish", { async: "array" })
+  emit("returns", "publish", { async: "array" })
 
-  require("./publishCommitVersionChanges")(dot)
-  require("./publishDirtyStatus")(dot)
-  require("./publishGitCommit")(dot)
-  require("./publishGitPush")(dot)
-  require("./publishGitTag")(dot)
-  require("./publishNpmInstallCommit")(dot)
-  require("./publishNpmVersion")(dot)
-  require("./publishProject")(dot)
-  require("./publishReadBranch")(dot)
-  require("./publishReadLastCommit")(dot)
-  require("./publishReadVersion")(dot)
-  require("./publishReleaseStatus")(dot)
-  require("./publishWaitForAll")(dot)
+  require("./publishCommitVersionChanges")(emit)
+  require("./publishDirtyStatus")(emit)
+  require("./publishGitCommit")(emit)
+  require("./publishGitPush")(emit)
+  require("./publishGitTag")(emit)
+  require("./publishNpmInstallCommit")(emit)
+  require("./publishNpmVersion")(emit)
+  require("./publishProject")(emit)
+  require("./publishReadBranch")(emit)
+  require("./publishReadLastCommit")(emit)
+  require("./publishReadVersion")(emit)
+  require("./publishReleaseStatus")(emit)
+  require("./publishWaitForAll")(emit)
 
-  dot.any("publish", publish)
+  emit.any("publish", publish)
 }
 
-async function publish(prop, arg, dot) {
-  const paths = await dot.glob(prop, {
+async function publish(arg, prop, emit) {
+  const paths = await emit.glob(prop, {
     absolute: true,
     pattern: arg.paths,
   })
@@ -55,12 +53,12 @@ async function publish(prop, arg, dot) {
   return Promise.all(
     paths.map(async path => {
       if (arg.status) {
-        return await dot.publishReleaseStatus(prop, {
+        return await emit.publishReleaseStatus(prop, {
           cli: true,
           cwd: path,
         })
       } else {
-        return await dot.publishProject(prop, {
+        return await emit.publishProject(prop, {
           ...arg,
           cwd: path,
           paths,

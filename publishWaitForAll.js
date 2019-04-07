@@ -1,15 +1,15 @@
-module.exports = function(dot) {
-  if (dot.publishWaitForAll) {
+module.exports = function(emit) {
+  if (emit.publishWaitForAll) {
     return
   }
 
-  dot.any("publishWaitForAll", publishWaitForAll)
+  emit.any("publishWaitForAll", publishWaitForAll)
 }
 
-function publishWaitForAll(prop, arg, dot) {
+function publishWaitForAll(arg, prop, emit) {
   return Promise.all([
-    dot.wait("npmVersion"),
-    dot.wait("dotVersion"),
-    dot.wait("npmPublish"),
+    emit.wait("npmVersion"),
+    emit.wait("emitVersion"),
+    emit.wait("npmPublish"),
   ])
 }
